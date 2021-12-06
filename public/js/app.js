@@ -21,33 +21,30 @@ const keyActive = (key) => {
 
 const keysDown = {};
 
-const players = [];
-const bullets = [];
-const enemies = [];
-let collisions = [];
+var players = [];
+var bullets = [];
+var stones = [];
+var fuel = [];
+var collisions = [];
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const intro = document.querySelector('#intro');
+const startBtn = intro.querySelector("#startGame");
 
 var client;
 var galaxysettings = {
   friction: 0.8,
   gravity: 0.7,
-  density: 50,
-  width: 1200,
-  height: 900,
+  density: 20,
+  width: canvas.width,
+  height: canvas.height,
 };
 
-var canvas = document.getElementById("game");
-var ctx = canvas.getContext("2d");
-canvas.width = galaxysettings.width;
-canvas.height = galaxysettings.height;
+
 
 var gameStarted = false;
-var fps, fpsInterval, startTime, now, then, elapsed;
-
-
-const collision = new Collision();
-
-
-
+var gameOver = false;
 // Inital starting position
 
 /*socket.on('socketClientID', (clientInfo) => {
@@ -73,83 +70,13 @@ socket.on('updatedPosition', (client) => {
 client = {
   id: "player01",
 };
-const newPlayer = new Spaceship(client);
-players.push(newPlayer);
 
+let player,ui;
 
-for(let i = 0; i < galaxysettings.density; i++){
-  enemies.push(new Enemy(galaxysettings,enemies));
-}
-
-window.addEventListener("keydown", (e) => {
-  keysDown[e.keyCode] = true;
-});
-
-window.addEventListener("keyup", (e) => {
-  keysDown[e.keyCode] = false;
-});
-
-window.addEventListener("shoot", (e) => {
-  bullets.push(new Bullet(e.detail,galaxysettings));
-});
-
-/*window.addEventListener("keydown", keyDownHandler, false);
-window.addEventListener("keyup", keyUpHandler, false);
-
-//KEYHANDLERS
-
-function keyDownHandler(e) {
-  e.preventDefault();
-
-  switch (e.keyCode) {
-    case 37:
-      controller.left = true;
-      controller.speed = -8;
-      break;
-
-    case 39:
-      controller.right = true;
-      controller.speed = 8;
-      break;
-
-    case 32:
-      controller.jump = true;
-      controller.jumpForce = -15;
-      break;
-  }
-  updateController();
-}
-
-function keyUpHandler(e) {
-  e.preventDefault();
-
-  switch (e.keyCode) {
-    case 37:
-      controller.left = false;
-      controller.speed = 0;
-      break;
-
-    case 39:
-      controller.right = false;
-      controller.speed = 0;
-      break;
-
-    case 32:
-      controller.jump = false;
-      controller.jumpForce = 0;
-      break;
-  }
-  //updateController();
-}*/
 
 function updateController() {
   // request another frame
   players.map((player) => {
-    console.log(
-      `Player id = ${player.client.id} === ${client.id} = ${
-        player.client.id === client.id
-      }`
-    );
     player.client.controller =
       player.client.id === client.id
         ? client.controller
@@ -163,24 +90,78 @@ function updateController() {
 function drawGame() {
   // calc elapsed time since last loop
 
-  ctx.fillStyle = "#110c29";
+  ctx.fillStyle = "#23211D";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  for (const enemy of enemies) {
-    enemy.update();
+  for (const stone of stones) {
+    stone.update();
+    stone.draw();
+    if(checkCollision(stone,player)) player.hitStone();
+    
+  }
+  for (const f of fuel) {
+    f.update();
+    f.draw();
+    if(checkCollision(f,player)) { 
+      player.addFuel(f.amount)
+      f.consumed();
+    }
   }
   for (const bullet of bullets) {
     bullet.update();
   }
-  for (const player of players) {
-    player.update();
-    collision.checkCollision(player,enemies);
-  }
-  
-  //collisions = players.concat(enemies,bullets);
-  
 
+  player.update();
+  ui.update(player.score,player.ammo,player.fuel);
+  
+  //collisions = players.concat(stones,bullets);
+  
+  if(!gameOver){
+    requestAnimationFrame(drawGame);
+  }else{
+    cancelAnimationFrame(drawGame);
+  }
+
+}
+
+function startGame(){
+
+  player = new Spaceship(client);
+  ui = new UI();
+
+  ui.toggleUI();
+
+  stones = [];
+  fuel = [];
+  bullets = [];
+
+  for(let i = 0; i < galaxysettings.density; i++){
+    stones.push(new Stone(randomBetweenNumbers(40,100),0.8, galaxysettings));
+  }
+
+  for(let j = 0; j < 3; j++){
+    fuel.push(new Fuel(20,30,0.8, galaxysettings));
+  }
+  cancelAnimationFrame(drawGame);
   requestAnimationFrame(drawGame);
 }
 
-drawGame();
+startBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  intro.classList.toggle('d-none');
+  startGame();
+})
+
+window.addEventListener("keydown", (e) => {
+  keysDown[e.keyCode] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+  keysDown[e.keyCode] = false;
+});
+
+window.addEventListener("shoot", (e) => {
+  bullets.push(new Bullet(e.detail,galaxysettings));
+});
+
+

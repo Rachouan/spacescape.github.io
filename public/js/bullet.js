@@ -5,8 +5,6 @@ class Bullet{
         this.width = 4;
         this.height = 20;
         this.galaxy = galaxy;
-        this.img = new Image(60, 45);
-        this.img.src = 'images/bullet.png';
         this.damage = 10;
         this.xVelocity = spaceship.xVelocity;
         this.yVelocity = spaceship.yVelocity;
@@ -26,7 +24,8 @@ class Bullet{
         ctx.beginPath();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.angle);
-        ctx.drawImage(this.img, -this.width/2, -this.height/2, this.width, this.height);
+        ctx.fillStyle="#fb6339";
+        ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
         ctx.restore();
     }
 }

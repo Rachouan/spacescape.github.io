@@ -11,10 +11,10 @@ class Spaceship {
   constructor(client) {
     this.type = "player";
     this.client = client;
-    this.width = 25;
+    this.width = 50;
     this.height = 50;
-    this.img = new Image(60, 45);
-    this.img.src = 'images/ship.svg';
+    this.img = new Image();
+    this.img.src = 'images/spaceship.gif';
     this.x = Math.floor(galaxysettings.width * Math.random());
     this.y = galaxysettings.height - 100;
     this.vy = 0;
@@ -24,8 +24,21 @@ class Spaceship {
     this.reverse = 0;
     this.angle = 0;
     this.angularVelocity = 0;
+    this.fuel = 100;
+    this.ammo = 100;
+    this.score = 0;
     this.isThrottling = false;
     this.isReversing = false;
+  }
+  hitStone(){
+    this.power = 0;
+    this.reverse = 1;
+    this.xVelocity = Math.sin(this.angle) * (this.power - this.reverse);
+    this.yVelocity = Math.cos(this.angle) * (this.power - this.reverse);
+  }
+  addFuel(amount){
+    this.fuel += amount;
+    this.fuel = this.fuel >= 100 ? 100 : this.fuel;
   }
   update() {
     let changed;
@@ -55,8 +68,10 @@ class Spaceship {
       this.isTurningRight = turnRight;
     }
     if (shoot) {
-        window.dispatchEvent(shootEvent);
+
+        if(this.ammo > 0) window.dispatchEvent(shootEvent);
         keysDown[32] = false;
+        this.ammo = this.ammo > 0 ? this.ammo - 1 : 0;
     }
 
     if (this.x > galaxysettings.width) {
@@ -75,6 +90,10 @@ class Spaceship {
       //changed = true;
     }
 
+    if(this.isThrottling || this.isReversing) this.fuel = this.fuel > 0 ? this.fuel - 0.1 : 0;
+
+    if(this.fuel <= 0){this.power = 0; this.reverse = 0; this.angularVelocity = 0;}
+
     if (this.isThrottling) {
       this.power += powerFactor * this.isThrottling;
     } else {
@@ -85,6 +104,7 @@ class Spaceship {
     } else {
       this.reverse -= reverseFactor;
     }
+    
 
     this.power = Math.max(0, Math.min(maxPower, this.power));
     this.reverse = Math.max(0, Math.min(maxReverse, this.reverse));
@@ -107,6 +127,7 @@ class Spaceship {
     this.yVelocity *= drag;
     this.angle += this.angularVelocity;
     this.angularVelocity *= angularDrag;
+    this.score += 0.01;
 
     this.draw();
   }
