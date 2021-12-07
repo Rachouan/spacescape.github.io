@@ -5,6 +5,15 @@ class Stone extends Obstacle {
         this.img.src = `images/stones/stone-${randomBetweenNumbers(1,4)}.png`;
         this.durability = 10;
     }
+    takeHit(damage){
+        this.durability -= damage;
+        this.width -= damage;
+        this.height -= damage;
+        if(this.durability < 0){
+            this.setPosition();
+            this.durability = 10;
+        }
+    }
     draw(){
         ctx.save();
         ctx.beginPath();

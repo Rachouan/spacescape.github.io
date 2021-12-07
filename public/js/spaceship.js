@@ -2,7 +2,6 @@ const maxPower = 0.3;
 const maxReverse = 0.3;
 const powerFactor = 0.009;
 const reverseFactor = 0.009;
-
 const drag = 0.95;
 const angularDrag = 0.95;
 const turnSpeed = 0.005;
@@ -11,10 +10,10 @@ class Spaceship {
   constructor(client) {
     this.type = "player";
     this.client = client;
-    this.width = 50;
+    this.width = 38;
     this.height = 50;
     this.img = new Image();
-    this.img.src = 'images/spaceship.gif';
+    this.img.src = 'images/spaceship.png';
     this.x = Math.floor(galaxysettings.width * Math.random());
     this.y = galaxysettings.height - 100;
     this.vy = 0;
@@ -26,6 +25,7 @@ class Spaceship {
     this.angularVelocity = 0;
     this.fuel = 100;
     this.ammo = 100;
+    this.shield = 100;
     this.score = 0;
     this.isThrottling = false;
     this.isReversing = false;
@@ -33,8 +33,10 @@ class Spaceship {
   hitStone(){
     this.power = 0;
     this.reverse = 1;
+    this.shield -= 10;
     this.xVelocity = Math.sin(this.angle) * (this.power - this.reverse);
     this.yVelocity = Math.cos(this.angle) * (this.power - this.reverse);
+    return this.shield <= 0;
   }
   addFuel(amount){
     this.fuel += amount;
@@ -71,7 +73,7 @@ class Spaceship {
 
         if(this.ammo > 0) window.dispatchEvent(shootEvent);
         keysDown[32] = false;
-        this.ammo = this.ammo > 0 ? this.ammo - 1 : 0;
+        this.ammo = this.ammo > 0 ? this.ammo - 10 : 0;
     }
 
     if (this.x > galaxysettings.width) {

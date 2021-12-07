@@ -1,8 +1,8 @@
-class Fuel extends Obstacle {
+class Ammo extends Obstacle {
     constructor(w,h,speed,galaxy){
-        super(w,h,speed,"fuel",galaxy)
+        super(w,h,speed,"ammo",galaxy)
         this.img = new Image(this.width, this.width);
-        this.img.src = `images/fuel.png`;
+        this.img.src = `images/ammo.png`;
         this.amount = 100;
     }
     consumed(){

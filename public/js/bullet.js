@@ -5,7 +5,7 @@ class Bullet{
         this.width = 4;
         this.height = 20;
         this.galaxy = galaxy;
-        this.damage = 10;
+        this.damage = 10 * Math.random();
         this.xVelocity = spaceship.xVelocity;
         this.yVelocity = spaceship.yVelocity;
         this.x = spaceship.x;

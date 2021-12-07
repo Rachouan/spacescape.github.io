@@ -4,15 +4,17 @@ class UI{
         this.volume = document.querySelector('#score');
         this.score = document.querySelector('#score');
         this.ammo = document.querySelector('#ammo');
+        this.shield = document.querySelector('#shield');
         this.fuel = document.querySelector('#fuel');
     }
-    update(score,ammo,fuel){
+    update(score,ammo,fuel,shield){
         this.updateScore(Math.floor(score));
         this.updateFuel(fuel);
         this.updateAmmo(ammo);
+        this.updateShield(shield);
     }
     toggleUI(){
-        this.ui.classList.toggle('d-none');
+        this.ui.classList.remove('d-none');
     }
     updateScore(score){
         this.score.innerHTML = `Score: ${score}m`;
@@ -22,5 +24,8 @@ class UI{
     }
     updateAmmo(percent){
         this.ammo.querySelector('.progress').style.width= percent+'%';
+    }
+    updateShield(percent){
+        this.shield.querySelector('.progress').style.width= percent+'%';
     }
 }

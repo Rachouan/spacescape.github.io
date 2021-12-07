@@ -18,7 +18,7 @@ class Obstacle{
         this.setRandomPosition();
     }
     update(){
-        this.y += this.speed;
+        this.y += this.galaxy.speed;
         this.angle += 1/this.width;
         if(this.y >= this.galaxy.height + this.height){
             this.setPosition();
