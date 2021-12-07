@@ -1,5 +1,7 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth - 40;
+canvas.height = window.innerHeight - 40;
 const intro = document.querySelector('#intro');
 const gameCardEl = document.querySelector('#gamecard');
 const gameoverEl = document.querySelector('#gameoverel');
@@ -56,7 +58,7 @@ var client;
 var galaxysettings = {
   friction: 0.8,
   gravity: 0.7,
-  density: 20,
+  density: 100,
   speed: 0.8,
   width: canvas.width,
   height: canvas.height,
@@ -158,7 +160,7 @@ function startGame(){
   bullets = [];
   ammo = [];
 
-  for(let i = 0; i < galaxysettings.density; i++){
+  for(let i = 0; i < Math.floor( galaxysettings.width / galaxysettings.density); i++){
     stones.push(new Stone(randomBetweenNumbers(40,100),0.8, galaxysettings));
   }
 
@@ -196,6 +198,7 @@ window.onload = () => {
 
   mute.addEventListener("click", (e) => {
     muted = !muted;
+    mute.innerHTML = muted ? 'Play':'Mute';
     if(muted) bgAudio.pause();
     else bgAudio.play();
 
