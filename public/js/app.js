@@ -1,4 +1,29 @@
-//var socket = io();
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const intro = document.querySelector('#intro');
+const gameCardEl = document.querySelector('#gamecard');
+const gameoverEl = document.querySelector('#gameoverel');
+const tutorial = document.querySelector('#tutorial');
+const startBtn = intro.querySelector("#startGame");
+const restartBtn = intro.querySelector("#restartGame");
+const mute = document.querySelector("#mute");
+
+const bgAudio = new Howl({
+  src: ['audio/bg-audio.mp3'],
+  autoplay: true,
+  loop: true,
+  volume: 0.5
+});
+
+const stoneCrush = new Howl({
+  src: ['audio/stone-crush.mp3'],
+  volume: 0.5
+});
+
+const laserAudio = new Howl({
+  src: ['audio/laser.mp3'],
+  volume: 0.5
+});
 
 const arrowKeys = {
   up: 38,
@@ -26,16 +51,7 @@ var bullets = [];
 var stones = [];
 var fuel = [];
 var ammo = [];
-
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
-const intro = document.querySelector('#intro');
-const gameCardEl = document.querySelector('#gamecard');
-const gameoverEl = document.querySelector('#gameoverel');
-const tutorial = document.querySelector('#tutorial');
-const startBtn = intro.querySelector("#startGame");
-const restartBtn = intro.querySelector("#restartGame");
-
+var audioPool = [];
 var client;
 var galaxysettings = {
   friction: 0.8,
@@ -45,49 +61,16 @@ var galaxysettings = {
   width: canvas.width,
   height: canvas.height,
 };
-
-
-
 var gameStarted = false;
 var gameOver = false;
-// Inital starting position
-
-/*socket.on('socketClientID', (clientInfo) => {
-    console.log('CLIENT ADDED',clientInfo);
-    //players = clientInfo.clients;
-    client = {
-      id:clientInfo.id,
-      controller: new Controller()
-    }
-    const newPlayer = new Player(client)
-    players.push(newPlayer)
-    socket.emit('newPlayer', newPlayer);
-    console.log(players);
-})
-
-socket.on('updatedPosition', (client) => {
-  players.map( player =>{ 
-    console.log(`Player id = ${player.client.id} === ${client.id} = ${player.client.id === client.id}`);
-    player.client.controller = player.client.id === client.id ? client.controller : player.client.controller;
-  })
-})*/
+var muted = false;
+var player,ui;
 
 client = {
   id: "player01",
 };
 
-let player,ui;
 
-
-/*function updateController() {
-  // request another frame
-  players.map((player) => {
-    player.client.controller =
-      player.client.id === client.id
-        ? client.controller
-        : player.client.controller;
-  });
-}*/
 
 
 function drawGame() {
@@ -129,8 +112,9 @@ function drawGame() {
     for (const stone of stones) {
       if(checkCollision(stone,bullet)) {
         index = bullets.indexOf(bullet);
-        stone.takeHit(bullet.damage);
+        let broke = stone.takeHit(bullet.damage);
         bullets.splice(index, 1);
+        if(broke && !muted) stoneCrush.play();
       }
     }
   }
@@ -188,20 +172,36 @@ function startGame(){
   requestAnimationFrame(drawGame);
 }
 
-restartBtn.addEventListener('click',startGame)
 
-startBtn.addEventListener('click',startGame)
 
-window.addEventListener("keydown", (e) => {
-  keysDown[e.keyCode] = true;
-});
+window.onload = () => {
+  bgAudio.play();
 
-window.addEventListener("keyup", (e) => {
-  keysDown[e.keyCode] = false;
-});
+  restartBtn.addEventListener('click',startGame)
 
-window.addEventListener("shoot", (e) => {
-  bullets.push(new Bullet(e.detail,galaxysettings));
-});
+  startBtn.addEventListener('click',startGame)
+
+  window.addEventListener("keydown", (e) => {
+    keysDown[e.keyCode] = true;
+  });
+
+  window.addEventListener("keyup", (e) => {
+    keysDown[e.keyCode] = false;
+  });
+
+  window.addEventListener("shoot", (e) => {
+    bullets.push(new Bullet(e.detail,galaxysettings));
+    if(!muted) laserAudio.play();
+  });
+
+  mute.addEventListener("click", (e) => {
+    muted = !muted;
+    if(muted) bgAudio.pause();
+    else bgAudio.play();
+
+  });
+
+}
+
 
 

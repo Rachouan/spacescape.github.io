@@ -42,6 +42,10 @@ class Spaceship {
     this.fuel += amount;
     this.fuel = this.fuel >= 100 ? 100 : this.fuel;
   }
+  addAmmo(amount){
+    this.ammo += amount;
+    this.ammo = this.ammo >= 100 ? 100 : this.ammo;
+  }
   update() {
     let changed;
 

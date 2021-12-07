@@ -12,7 +12,9 @@ class Stone extends Obstacle {
         if(this.durability < 0){
             this.setPosition();
             this.durability = 10;
+            return true;
         }
+        return false;
     }
     draw(){
         ctx.save();
