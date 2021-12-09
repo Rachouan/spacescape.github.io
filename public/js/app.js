@@ -1,13 +1,26 @@
+firebase.initializeApp({
+  apiKey: "AIzaSyBGmgYSxACyUG04eFt0HJoFlTAYkepfqOY",
+  authDomain: "space-escape-79727.firebaseapp.com",
+  projectId: "space-escape-79727",
+  storageBucket: "space-escape-79727.appspot.com",
+  messagingSenderId: "1096248907906",
+  appId: "1:1096248907906:web:f3b006a61e5af11f50fc9b",
+});
+
+const db = firebase.firestore();
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth - 40;
-canvas.height = window.innerHeight - 40;
+canvas.width = 1280;
+canvas.height = 800;
 const intro = document.querySelector('#intro');
 const gameCardEl = document.querySelector('#gamecard');
 const gameoverEl = document.querySelector('#gameoverel');
 const tutorial = document.querySelector('#tutorial');
 const startBtn = intro.querySelector("#startGame");
 const restartBtn = intro.querySelector("#restartGame");
+const highscoreform = document.querySelector("#highscoreForm");
+const highscoreBtn = document.querySelector("#highscoreBtn");
 const mute = document.querySelector("#mute");
 
 const bgAudio = new Howl({
@@ -58,15 +71,18 @@ var client;
 var galaxysettings = {
   friction: 0.8,
   gravity: 0.7,
-  density: 100,
+  density: 50,
   speed: 0.8,
   width: canvas.width,
   height: canvas.height,
 };
 var gameStarted = false;
 var gameOver = false;
-var muted = false;
+var muted = true;
 var player,ui;
+
+var highscore = new HightScore("#highscore");
+highscore.getHighscores();
 
 client = {
   id: "player01",
@@ -84,7 +100,7 @@ function drawGame() {
     stone.update();
     stone.draw();
     if(checkCollision(stone,player)) {
-      if(player.hitStone()){
+      if(player.hitStone(stone)){
         gameOver = true;
       }
     }
@@ -123,7 +139,7 @@ function drawGame() {
 
   player.update();
   ui.update(player.score,player.ammo,player.fuel,player.shield);
-  this.galaxysettings.speed += 0.00001;
+  this.galaxysettings.speed += 0.0001;
   
   //collisions = players.concat(stones,bullets);
   
@@ -140,6 +156,7 @@ function gameIsOver(){
   intro.classList.remove('d-none');
   gameCardEl.classList.add('d-none');
   gameoverEl.classList.remove('d-none');
+  highscoreform.classList.toggle('d-none',false);
   gameoverEl.querySelector('#totalscore').innerHTML=`${Math.floor(player.score)}m`;
 }
 
@@ -201,8 +218,27 @@ window.onload = () => {
     mute.innerHTML = muted ? 'Play':'Mute';
     if(muted) bgAudio.pause();
     else bgAudio.play();
-
   });
+
+  highscoreBtn.addEventListener('click', (e) => {
+    highscore.showHighscore(true);
+  });
+
+  highscoreform.addEventListener('submit', (e) => {
+    e.preventDefault();
+    var data = new FormData(highscoreform);
+    var scoreData = {};
+    for (const [name,value] of data) {
+      scoreData[name] = value;
+    }
+    if(scoreData['gamertag'].length){
+      highscore.addHighscore(scoreData['gamertag'],Math.floor(player.score));
+      highscoreform.classList.toggle('d-none',true);
+      highscore.showHighscore(true);
+    }else{
+      alert('Please enter a gamertag');
+    }
+  })
 
 }
 

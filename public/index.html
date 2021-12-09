@@ -11,18 +11,29 @@
 </head>
 <body>
     <section class="d-flex align-items-center justify-content-center p-0 w-100 h-100 position-absolute">
-        <div class="position-relative">
+        <article class="position-relative">
             <div id="intro" class="card border-0 text-white position-absolute w-100 h-100 d-flex justify-content-center align-items-center flex-column" style="background-color: #23211d;">
-                <div id="gamecard" class="text-center">
+                <div id="gamecard" class="text-center d-flex flex-column justify-content-center align-items-center">
                     <h1 class="display-2 d-none">Space Escape</h1>
                     <img src="images/logo.svg" class="w-100" style="max-width: 400px;"/>
                     <p class="lead mt-4">Escape as fast as you can from meteors.</p>
-                    <button class="btn btn-lg btn-danger" id="startGame">Start Game</button>
-                    <a href="" class="link-white" id="instructions">See Instructions</a>
+                    <button class="btn btn-lg btn-danger mb-3" id="startGame">Start Game</button>
+                    <button id="instructions" class="btn text-white">See Instructions</button>
+                    <button id="highscoreBtn" class="btn text-white">Highscores</button>
                 </div>
                 <div id="gameoverel" class="text-center d-none">
                     <h1 class="display-2">Game Over</h1>
                     <p class="lead mb-4">You're Score Is <span id="totalscore">0m</span></p>
+
+                    <form class="row g-2" id="highscoreForm">
+                        <div class="col">
+                            <input type="text" class="form-control form-control-lg" id="gamertag" name="gamertag" placeholder="Gamertag" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-danger btn-lg mb-3">Save Score</button>
+                        </div>
+                    </form>
+
                     <button class="btn btn-lg btn-danger" id="restartGame">Restart Game</button>
                 </div>
                 <div id="tutorial" class="text-center d-none">
@@ -43,14 +54,29 @@
                 </div>
             </nav>
             <canvas id="game" class="rounded"></canvas>
-        </div>
+        </article>
+        <aside class="position-fixed d-flex align-items-center justify-content-center w-100 h-100 d-none" style="background-color: rgba(0,0,0,.9);" id="highscore">
+            <div class="card border-0 shadow-sm w-100 text-center" style="max-width: 400px;">
+                
+                <div class="card-body p-4">
+                    <h2>Leaderboard</h2>
+                    <p>You're competing with the world</p>
+                    <div id="content" class="text-left border-top">
+                        <p class="text-muted py-4">Loading...</p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="button" id="closeHighscore" class="btn btn-light">Close</button>
+                </div>
+            </div>
+        </aside>
     </section>
-
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/collision.js"></script>
+    <script src="js/highscore.js"></script>
     <script src="js/obstacle.js"></script>
     <script src="js/bullet.js"></script>
     <script src="js/ammo.js"></script>

@@ -30,13 +30,16 @@ class Spaceship {
     this.isThrottling = false;
     this.isReversing = false;
   }
-  hitStone(){
-    this.power = 0;
-    this.reverse = 1;
-    this.shield -= 10;
-    this.xVelocity = Math.sin(this.angle) * (this.power - this.reverse);
-    this.yVelocity = Math.cos(this.angle) * (this.power - this.reverse);
-    return this.shield <= 0;
+  hitStone(stone){
+
+    this.shield -= 1;
+
+    let angleRadians = Math.atan2(this.y - stone.y, this.x - stone.x);
+    let radius = stone.width/2 + this.width/2;
+    this.x = stone.x+radius*Math.cos(angleRadians);
+    this.y = stone.y+radius*Math.sin(angleRadians);
+
+    return this.shield <= 0 || this.fuel <= 0;
   }
   addFuel(amount){
     this.fuel += amount;
@@ -142,7 +145,6 @@ class Spaceship {
     ctx.beginPath();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    ctx.fillStyle = "#ffffff";
     ctx.drawImage(this.img, -this.width/2, -this.height/2, this.width, this.height);
     ctx.restore();
   }
