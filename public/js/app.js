@@ -78,7 +78,7 @@ var galaxysettings = {
 };
 var gameStarted = false;
 var gameOver = false;
-var muted = true;
+var muted = false;
 var player,ui;
 
 var highscore = new HightScore("#highscore");
@@ -139,7 +139,7 @@ function drawGame() {
 
   player.update();
   ui.update(player.score,player.ammo,player.fuel,player.shield);
-  this.galaxysettings.speed += 0.0001;
+  this.galaxysettings.speed += 0.001;
   
   //collisions = players.concat(stones,bullets);
   
@@ -162,6 +162,7 @@ function gameIsOver(){
 
 function startGame(){
   gameOver = false;
+  galaxysettings.speed = .8;
   intro.classList.add('d-none');
   gameoverEl.classList.add('d-none');
   gameCardEl.classList.add('d-none');
