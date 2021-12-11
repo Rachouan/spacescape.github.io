@@ -26,7 +26,6 @@ class Obstacle{
     }
     draw(){
         ctx.save();
-        ctx.beginPath();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.angle);
         //ctx.fillStyle = this.color;

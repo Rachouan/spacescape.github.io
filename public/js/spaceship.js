@@ -7,18 +7,16 @@ const angularDrag = 0.95;
 const turnSpeed = 0.005;
 
 class Spaceship {
-  constructor(client) {
-    this.type = "player";
-    this.client = client;
-    this.width = 38;
-    this.height = 50;
+  constructor(player) {
+    this.player = player;
+    this.width = 40;
+    this.height = 40;
     this.img = new Image();
     this.img.src = 'images/spaceship.png';
     this.x = Math.floor(galaxysettings.width * Math.random());
     this.y = galaxysettings.height - 100;
+    this.vx = 0;
     this.vy = 0;
-    this.xVelocity = 0;
-    this.yVelocity = 0;
     this.power = 0;
     this.reverse = 0;
     this.angle = 0;
@@ -54,8 +52,8 @@ class Spaceship {
 
     const canTurn = this.power > 0.0025 || this.reverse;
 
-    const pressingUp = keyActive("up");
-    const pressingDown = keyActive("down");
+    const pressingUp = keyActive(`${this.player == 0 ? 'up':'upl'}`);
+    const pressingDown = keyActive(`${this.player == 0 ? 'down':'downl'}`);
 
     if (this.isThrottling !== pressingUp || this.isReversing !== pressingDown) {
       changed = true;
@@ -63,9 +61,9 @@ class Spaceship {
       this.isReversing = pressingDown;
     }
 
-    const turnLeft = canTurn && keyActive("left");
-    const turnRight = canTurn && keyActive("right");
-    const shoot = keyActive("space");
+    const turnLeft = canTurn && keyActive(`${this.player == 0 ? 'left':'leftl'}`);
+    const turnRight = canTurn && keyActive(`${this.player == 0 ? 'right':'rightl'}`);
+    const shoot = keyActive(`${this.player == 0 ? 'space':'spacel'}`);
     const shootEvent = new CustomEvent('shoot', { detail: this } );
 
     if (this.isTurningLeft !== turnLeft) {
@@ -79,7 +77,7 @@ class Spaceship {
     if (shoot) {
 
         if(this.ammo > 0) window.dispatchEvent(shootEvent);
-        keysDown[32] = false;
+        keysDown[`${this.player == 0 ? '93':'91'}`] = false;
         this.ammo = this.ammo > 0 ? this.ammo - 10 : 0;
     }
 
@@ -93,10 +91,8 @@ class Spaceship {
 
     if (this.y > galaxysettings.height - this.height/3) {
       this.y = galaxysettings.height - this.height/3;
-      //changed = true;
     } else if (this.y < this.height/2) {
       this.y = this.height/2;
-      //changed = true;
     }
 
     if(this.isThrottling || this.isReversing) this.fuel = this.fuel > 0 ? this.fuel - 0.1 : 0;
@@ -127,22 +123,25 @@ class Spaceship {
       this.angularVelocity += direction * turnSpeed * this.isTurningRight;
     }
 
-    this.xVelocity += Math.sin(this.angle) * (this.power - this.reverse);
-    this.yVelocity += Math.cos(this.angle) * (this.power - this.reverse);
+    this.vx += Math.sin(this.angle) * (this.power - this.reverse);
+    this.vy += Math.cos(this.angle) * (this.power - this.reverse);
 
-    this.x += this.xVelocity;
-    this.y -= this.yVelocity;
-    this.xVelocity *= drag;
-    this.yVelocity *= drag;
+    this.x += this.vx;
+    this.y -= this.vy;
+    this.vx *= drag;
+    this.vy *= drag;
     this.angle += this.angularVelocity;
     this.angularVelocity *= angularDrag;
     this.score += 0.01;
-
+    if(this.power > 0 && this.fuel > 0) new Particle(this.x,this.y,0,0,this.angle,Math.random()*this.power*20,this.power*50,'#fb6339',Math.random()*1000);
+    
     this.draw();
+   
+    
+    
   }
   draw() {
     ctx.save();
-    ctx.beginPath();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
     ctx.drawImage(this.img, -this.width/2, -this.height/2, this.width, this.height);

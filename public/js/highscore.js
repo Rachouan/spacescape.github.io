@@ -8,16 +8,13 @@ class HightScore{
         this.data = [];
     }
     getHighscores(){
-        console.log(this.element)
         this.content = this.element.querySelector("#content");
         let highscorecontent;
-        db.collection("highscores").orderBy("score", "desc").limit(10).get().then((querySnapshot) => {
-            console.log()
+        db.collection("highscores").orderBy("score", "desc").limit(3).get().then((querySnapshot) => {
             if(querySnapshot.size){
                 highscorecontent = `<ul class="list-group list-group-flush">`;
                 let data;
                 querySnapshot.docs.forEach((doc,index) => {
-                    console.log(index);
                     data = doc.data();
                     highscorecontent += `<li class="list-group-item d-flex justify-content-between align-items-center lead"><strong>${index+1}.${data.gamertag}</strong> <span class="text-muted">${data.score}m</span></li>`
                 });
