@@ -10,7 +10,7 @@ class Stone extends Obstacle {
         this.width -= damage;
         this.height -= damage;
         if(this.durability < 0){
-            new Explosion(this.x,this.y, 100);
+            new Explosion(this.x,this.y, 100,'#fb6339');
             this.setPosition();
             this.durability = 10;
             return true;

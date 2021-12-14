@@ -7,14 +7,15 @@ const angularDrag = 0.95;
 const turnSpeed = 0.005;
 
 class Spaceship {
-  constructor(player) {
+  constructor(player,galaxy) {
     this.player = player;
+    this.galaxy = galaxy;
     this.width = 40;
     this.height = 40;
     this.img = new Image();
     this.img.src = 'images/spaceship.png';
-    this.x = Math.floor(galaxysettings.width * Math.random());
-    this.y = galaxysettings.height - 100;
+    this.x = Math.floor(this.galaxy.width * Math.random());
+    this.y = this.galaxy.height - 100;
     this.vx = 0;
     this.vy = 0;
     this.power = 0;
@@ -24,6 +25,7 @@ class Spaceship {
     this.fuel = 100;
     this.ammo = 100;
     this.shield = 100;
+    this.exploded = false;
     this.score = 0;
     this.isThrottling = false;
     this.isReversing = false;
@@ -38,6 +40,16 @@ class Spaceship {
     this.y = stone.y+radius*Math.sin(angleRadians);
 
     return this.shield <= 0 || this.fuel <= 0;
+  }
+  explode(){
+    if(!this.exploded){
+      new Explosion(this.x, this.y, 200, '#ffffff');
+      this.power = 0;
+      this.exploded = true;
+      this.vx = 0;
+      this.vy = 0;
+    }
+    
   }
   addFuel(amount){
     this.fuel += amount;
@@ -81,16 +93,16 @@ class Spaceship {
         this.ammo = this.ammo > 0 ? this.ammo - 10 : 0;
     }
 
-    if (this.x > galaxysettings.width) {
-      this.x -= galaxysettings.width;
+    if (this.x > this.galaxy.width) {
+      this.x -= this.galaxy.width;
       changed = true;
     } else if (this.x < 0) {
-      this.x += galaxysettings.width;
+      this.x += this.galaxy.width;
       changed = true;
     }
 
-    if (this.y > galaxysettings.height - this.height/3) {
-      this.y = galaxysettings.height - this.height/3;
+    if (this.y > this.galaxy.height - this.height/3) {
+      this.y = this.galaxy.height - this.height/3;
     } else if (this.y < this.height/2) {
       this.y = this.height/2;
     }
@@ -133,12 +145,11 @@ class Spaceship {
     this.angle += this.angularVelocity;
     this.angularVelocity *= angularDrag;
     this.score += 0.01;
-    if(this.power > 0 && this.fuel > 0) new Particle(this.x,this.y,0,0,this.angle,Math.random()*this.power*20,this.power*50,'#fb6339',Math.random()*1000);
+    if(this.power > 0 && this.fuel > 0 && !this.exploded) new Particle(this.x,this.y,this.angle,Math.random()*this.power*20,this.power*50,'#fb6339',Math.random()*1000);
     
-    this.draw();
-   
-    
-    
+    if(this.shield > 0){
+      this.draw();
+    }
   }
   draw() {
     ctx.save();

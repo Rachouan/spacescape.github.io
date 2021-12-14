@@ -1,5 +1,5 @@
 class Particle{
-    constructor(x,y,vx,vy,angle,speed,size,color,id){
+    constructor(x,y,angle,speed,size,color,id){
         this.id = id;
         this.x = x;
         this.y = y;
@@ -12,7 +12,7 @@ class Particle{
         this.life = 0;
         this.maxLife = 100;
         this.opacity = 100;
-        particles[this.id] = this;
+        game.particles[this.id] = this;
     }
     update(){
 
@@ -25,7 +25,7 @@ class Particle{
         
         // If Particle is old, it goes in the chamber for renewal
         if (this.life >= this.maxLife || this.size <= 0) {
-        delete particles[this.id];
+        delete game.particles[this.id];
         }else{
           this.draw();
         }

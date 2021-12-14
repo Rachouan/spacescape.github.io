@@ -16,6 +16,7 @@ firebase.initializeApp({
 
 const db = firebase.firestore();
 
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 canvas.width = 1280;
@@ -37,16 +38,6 @@ const bgAudio = new Howl({
   src: ["audio/bg-audio.mp3"],
   autoplay: true,
   loop: true,
-  volume: 0.5,
-});
-
-const stoneCrush = new Howl({
-  src: ["audio/stone-crush.mp3"],
-  volume: 0.5,
-});
-
-const laserAudio = new Howl({
-  src: ["audio/laser.mp3"],
   volume: 0.5,
 });
 
@@ -81,97 +72,16 @@ const keyActive = (key) => {
 
 const keysDown = {};
 
-var players = [];
-var bullets = [];
-var stones = [];
-var fuel = [];
-var ammo = [];
-var audioPool = [];
-var particles = {};
-var client;
-var galaxysettings = {
-  friction: 0.8,
-  gravity: 0.7,
-  density: 50,
-  speed: 0.8,
-  width: canvas.width,
-  height: canvas.height,
-};
-var gameStarted = false;
-var gameOver = false;
-var muted = false;
-var player, ui;
-var uiState = UISTATE.START;
-var playerCount = 1; 
-
 var highscore = new HightScore("#highscore");
 highscore.getHighscores();
+var game;
+var uiState = UISTATE.START;
 
 function drawGame() {
-  ctx.fillStyle = "#23211D";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  for (const stone of stones) {
-    stone.update();
-    stone.draw();
-    for (const player of players) {
-      if (checkCollision(stone, player)) {
-        if (player.hitStone(stone)) {
-          gameOver = true;
-        }
-      }
-    }
-  }
-
-  for (const f of fuel) {
-    f.update();
-    f.draw();
-    for (const player of players) {
-      if (checkCollision(f, player)) {
-        player.addFuel(f.amount);
-        f.consumed();
-      }
-    }
-  }
-
-  for (const a of ammo) {
-    a.update();
-    a.draw();
-    for (const player of players) {
-      if (checkCollision(a, player)) {
-        player.addAmmo(a.amount);
-        a.consumed();
-      }
-    }
-  }
-
-  for (const bullet of bullets) {
-    bullet.update();
-    let index;
-    for (const stone of stones) {
-      if (checkCollision(stone, bullet)) {
-        index = bullets.indexOf(bullet);
-        let broke = stone.takeHit(bullet.damage);
-        bullets.splice(index, 1);
-        if (broke && !muted) stoneCrush.play();
-      }
-    }
-  }
-
-  for (const particle in particles) {
-    particles[particle].update();
-  }
-
-  for (const player of players) {
-    player.update();
-  }
-
-  ui.update(players[0].score, players[0].ammo, players[0].fuel, players[0].shield);
-  this.galaxysettings.speed += 0.001;
-
-  //collisions = players.concat(stones,bullets);
-
-  if (!gameOver) {
+  
+  //ui.update(players[0].score, players[0].ammo, players[0].fuel, players[0].shield);
+  if (!game.gameOver) {
+    game.draw();
     requestAnimationFrame(drawGame);
   } else {
     cancelAnimationFrame(drawGame);
@@ -182,42 +92,19 @@ function drawGame() {
 function gameIsOver() {
   uiState = UISTATE.GAMEOVER;
   setUIState();
+  
   gameoverEl.querySelector("#totalscore").innerHTML = `${Math.floor(
-    player.score
+    game.players[0].score
   )}m`;
 }
 
 function startGame(cnt) {
-  playerCount = cnt;
   uiState = UISTATE.PLAYING;
-  gameOver = false;
-  galaxysettings.speed = 0.8;
-
+  game = new Game(cnt)
+  game.initialize();
   ui = new UI();
   ui.toggleUI();
 
-  stones = [];
-  fuel = [];
-  bullets = [];
-  ammo = [];
-  particles = {};
-  players = [];
-
-  for(let i=0; i<playerCount; i++) {
-    players.push(new Spaceship(i));
-  }
-
-  for (let i = 0; i < Math.floor(galaxysettings.width / galaxysettings.density); i++) {
-    stones.push(new Stone(randomBetweenNumbers(40, 100), 0.8, galaxysettings));
-  }
-
-  for (let i = 0; i < 3; i++) {
-    fuel.push(new Fuel(20, 30, 0.8, galaxysettings));
-  }
-
-  for (let i = 0; i < 1; i++) {
-    ammo.push(new Ammo(20, 20, 0.8, galaxysettings));
-  }
   setUIState();
   requestAnimationFrame(drawGame);
 }
@@ -238,11 +125,6 @@ window.onload = () => {
 
   window.addEventListener("keyup", (e) => {
     keysDown[e.keyCode] = false;
-  });
-
-  window.addEventListener("shoot", (e) => {
-    bullets.push(new Bullet(e.detail, galaxysettings));
-    if (!muted) laserAudio.play();
   });
 
   mute.addEventListener("click", (e) => {
