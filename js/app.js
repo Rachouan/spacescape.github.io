@@ -133,12 +133,12 @@ window.onload = () => {
 
   backToGame.addEventListener("click", (e) => {
     uiState = UISTATE.START;
-    setUIState()
+    setUIState();
   });
 
   instructionsBtn.addEventListener("click", (e) => {
     uiState = UISTATE.TUTORIAL;
-    setUIState()
+    setUIState();
   });
 
   highscoreBtn.addEventListener("click", (e) => {
