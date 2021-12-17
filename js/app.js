@@ -33,6 +33,10 @@ const highscoreBtn = document.querySelector("#highscoreBtn");
 const instructionsBtn = document.querySelector("#instructions");
 const backToGame = document.querySelector("#backToGame");
 const mute = document.querySelector("#mute");
+const highscore = new HightScore("#highscore");
+highscore.getHighscores();
+var game;
+var uiState = UISTATE.START;
 
 const bgAudio = new Howl({
   src: ["audio/bg-audio.mp3"],
@@ -46,36 +50,41 @@ const arrowKeys = {
   down: 40,
   left: 37,
   right: 39,
-  space: 93,
+  space: 32,
   upl: 87,
   downl: 83,
   leftl: 65,
   rightl: 68,
-  spacel: 91,
+  spacel: 70,
 };
 const wasdKeys = {
   up: 38,
   down: 40,
   left: 37,
   right: 39,
-  space: 93,
+  space: 32,
   upl: 87,
   downl: 83,
   leftl: 65,
   rightl: 68,
-  spacel: 91,
+  spacel: 70,
 };
 
 const keyActive = (key) => {
   return keysDown[arrowKeys[key]] || keysDown[wasdKeys[key]] || false;
 };
 
+
 const keysDown = {};
 
-var highscore = new HightScore("#highscore");
-highscore.getHighscores();
-var game;
-var uiState = UISTATE.START;
+window.addEventListener("keydown", (e) => {
+  keysDown[e.keyCode] = true;
+  console.log(e.keyCode);
+});
+
+window.addEventListener("keyup", (e) => {
+  keysDown[e.keyCode] = false;
+});
 
 function drawGame() {
   
@@ -116,18 +125,11 @@ window.onload = () => {
 
   multiplayerBtn.addEventListener("click",()=>{ startGame(2)});
 
-  window.addEventListener("keydown", (e) => {
-    keysDown[e.keyCode] = true;
-  });
-
-  window.addEventListener("keyup", (e) => {
-    keysDown[e.keyCode] = false;
-  });
 
   mute.addEventListener("click", (e) => {
-    muted = !muted;
-    mute.innerHTML = muted ? "Play" : "Mute";
-    if (muted) bgAudio.pause();
+    game.muted = !game.muted;
+    mute.innerHTML = game.muted ? "Play" : "Mute";
+    if (game.muted) bgAudio.pause();
     else bgAudio.play();
   });
 

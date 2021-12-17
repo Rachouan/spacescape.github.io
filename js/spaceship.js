@@ -91,7 +91,7 @@ class Spaceship {
     if (shoot) {
 
         if(this.ammo > 0) window.dispatchEvent(shootEvent);
-        keysDown[`${this.player == 0 ? '93':'91'}`] = false;
+        keysDown[`${this.player == 0 ? '32':'70'}`] = false;
         this.ammo = this.ammo > 0 ? this.ammo - 10 : 0;
     }
 
