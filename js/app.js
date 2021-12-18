@@ -78,37 +78,27 @@ const keyActive = (key) => {
 
 const keysDown = {};
 
-window.addEventListener("keydown", (e) => {
-  keysDown[e.keyCode] = true;
-  console.log(e.keyCode);
-});
+window.addEventListener("keydown", e => keysDown[e.keyCode] = true );
 
-window.addEventListener("keyup", (e) => {
-  keysDown[e.keyCode] = false;
-});
+window.addEventListener("keyup", e => keysDown[e.keyCode] = false);
 
 function drawGame() {
-  
-
-  requestAnimationFrame(drawGame);
-
-  ui.update(game.getScore(), game.players[0].ammo, game.players[0].fuel, game.players[0].shield);
 
   now = Date.now();
   elapsed = now - then;
 
-  if (elapsed > fpsInterval) {
-      then = now - (elapsed % fpsInterval);
-      console.log('Drawing:',then);
-      if (!game.gameOver) {
+  if (!game.gameOver) {
+    requestAnimationFrame(drawGame);
+    ui.update(game.getScore());
+    if (elapsed > fpsInterval) {
+        then = now - (elapsed % fpsInterval);
         game.update();
-      } else {
-        cancelAnimationFrame(drawGame);
-        gameIsOver();
-      }
-      
+    }
+  } else {
+    cancelAnimationFrame(drawGame);
+    gameIsOver();
   }
-  
+
 }
 
 function gameIsOver() {

@@ -26,17 +26,16 @@ class HightScore{
         });
     }
     addHighscore(gamertag,score){
-
+        
         db.collection("highscores").doc().set({
             gamertag: gamertag,
             score: score
         })
         .then(() => {
-            console.log("Document successfully written!");
             this.getHighscores();
         })
         .catch((error) => {
-            console.error("Error writing document: ", error);
+            alert("Error writing document: ", error);
         });
 
     }

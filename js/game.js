@@ -60,15 +60,18 @@ class Game {
     for (let i = 0; i < 1; i++) {
       this.ammo.push(new Ammo(20, 20, 0.8, this.galaxy));
     }
+    this.clearCanvas();
   }
   update(){
     this.score += 0.01;
     this.draw();
   }
-  draw() {
+  clearCanvas(){
     ctx.fillStyle = "#23211D";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+  }
+  draw() {
+    this.clearCanvas();
     for (const stone of this.stones) {
       stone.update();
       stone.draw();

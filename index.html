@@ -19,19 +19,19 @@
                     <img src="images/logo.svg" class="w-75" style="max-width: 400px;"/>
                     <p class="lead mt-4">Escape as fast as you can from meteors.</p>
                     <div class="d-flex align-items-center">
-                        <button class="btn  btn-danger mb-3 mx-2" id="startGame">Single Player</button>
-                        <button class="btn  btn-danger mb-3 mx-2" id="multiPlayer">Multiplayer</button>
+                        <button class="btn btn-danger mb-3 mx-2" id="startGame">Single Player</button>
+                        <button class="btn btn-danger mb-3 mx-2" id="multiPlayer">Multiplayer</button>
                     </div>
                     <button id="instructions" class="btn text-white">See Instructions</button>
                     <button id="highscoreBtn" class="btn text-white">Highscores</button>
                 </div>
                 <div id="gameoverel" class="text-center d-none">
-                    <h1 class="display-2">Game Over</h1>
+                    <h1 class="display-2 mb-1">Game Over</h1>
                     <p class="lead mb-4">You're Score Is <span id="totalscore">0m</span></p>
 
-                    <form class="row g-2" id="highscoreForm">
+                    <form class="row g-2 mb-3" id="highscoreForm">
                         <div class="col">
-                            <input type="text" class="form-control form-control-lg" id="gamertag" name="gamertag" placeholder="Gamertag" required>
+                            <input type="text" class="form-control" id="gamertag" name="gamertag" placeholder="Gamertag" required>
                         </div>
                         <div class="col-auto">
                             <button type="submit" class="btn btn-danger  mb-3">Save Score</button>
