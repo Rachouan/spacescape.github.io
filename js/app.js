@@ -19,8 +19,8 @@ const db = firebase.firestore();
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-canvas.width = 1200;
-canvas.height = 800;
+canvas.width = 1100;
+canvas.height = 700;
 const intro = document.querySelector("#intro");
 const gameCardEl = document.querySelector("#gamecard");
 const gameoverEl = document.querySelector("#gameoverel");
