@@ -37,6 +37,7 @@ const highscore = new HightScore("#highscore");
 highscore.getHighscores();
 var game;
 var uiState = UISTATE.START;
+var fps, fpsInterval, startTime, now, then, elapsed;
 
 const bgAudio = new Howl({
   src: ["audio/bg-audio.mp3"],
@@ -88,14 +89,26 @@ window.addEventListener("keyup", (e) => {
 
 function drawGame() {
   
+
+  requestAnimationFrame(drawGame);
+
   ui.update(game.getScore(), game.players[0].ammo, game.players[0].fuel, game.players[0].shield);
-  if (!game.gameOver) {
-    game.update();
-    requestAnimationFrame(drawGame);
-  } else {
-    cancelAnimationFrame(drawGame);
-    gameIsOver();
+
+  now = Date.now();
+  elapsed = now - then;
+
+  if (elapsed > fpsInterval) {
+      then = now - (elapsed % fpsInterval);
+      console.log('Drawing:',then);
+      if (!game.gameOver) {
+        game.update();
+      } else {
+        cancelAnimationFrame(drawGame);
+        gameIsOver();
+      }
+      
   }
+  
 }
 
 function gameIsOver() {
@@ -112,6 +125,10 @@ function startGame(cnt) {
   ui.toggleUI();
 
   setUIState();
+  fps = 60;
+  fpsInterval = 1000 / fps;
+  then = Date.now();
+  startTime = then;
   requestAnimationFrame(drawGame);
 }
 
